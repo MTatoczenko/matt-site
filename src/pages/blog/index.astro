@@ -1,0 +1,65 @@
+---
+import FormattedDate from '../../components/FormattedDate.astro';
+import { SITE_TITLE } from '../../consts';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getPostUrl, getPublishedPosts, isDraft } from '../../lib/posts';
+
+const posts = await getPublishedPosts();
+---
+
+<BaseLayout title="Blog" description={`Posts by ${SITE_TITLE}.`}>
+	<h1>Blog</h1>
+	{
+		posts.length === 0 ? (
+			<p>Nothing here yet. Check back soon.</p>
+		) : (
+			<ul class="post-list">
+				{posts.map((post) => (
+					<li>
+						<a href={getPostUrl(post)}>
+							<h2 class="title">
+								{post.data.title}
+								{isDraft(post) && <span class="draft">Draft</span>}
+							</h2>
+						</a>
+						<p class="meta">
+							<FormattedDate date={post.data.pubDate} />
+						</p>
+						<p class="description">{post.data.description}</p>
+					</li>
+				))}
+			</ul>
+		)
+	}
+</BaseLayout>
+
+<style>
+	.post-list li {
+		margin-bottom: 2em;
+	}
+	.post-list a {
+		text-decoration: none;
+	}
+	.title {
+		margin: 0;
+	}
+	.post-list a:hover .title {
+		color: var(--accent);
+	}
+	.meta,
+	.description {
+		margin: 0;
+	}
+	.meta {
+		color: rgb(var(--gray));
+	}
+	.draft {
+		margin-left: 0.5em;
+		padding: 0.1em 0.4em;
+		border-radius: 4px;
+		font-size: 0.5em;
+		vertical-align: middle;
+		background: rgb(var(--gray-light));
+		color: rgb(var(--gray-dark));
+	}
+</style>

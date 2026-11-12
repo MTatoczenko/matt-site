@@ -1,0 +1,54 @@
+---
+import FormattedDate from '../components/FormattedDate.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getPostUrl, getPublishedPosts } from '../lib/posts';
+
+const recentPosts = (await getPublishedPosts()).slice(0, 3);
+---
+
+<BaseLayout>
+	<section class="intro">
+		<h1>Hi, I'm Matt.</h1>
+		<p>
+			I'm a software engineer at Snowflake, based in Renton, WA. Outside of work I build things for
+			fun: Android apps, Unity games, websites, and whatever else catches my interest.
+		</p>
+		<p>
+			This site is where I put my projects, experiments, and the occasional write-up. More <a href="/about/">about me</a>.
+		</p>
+	</section>
+
+	<section>
+		<h2>Recent posts</h2>
+		{
+			recentPosts.length === 0 ? (
+				<p>Nothing here yet. Check back soon.</p>
+			) : (
+				<ul class="post-list">
+					{recentPosts.map((post) => (
+						<li>
+							<span class="date"><FormattedDate date={post.data.pubDate} /></span>
+							<a href={getPostUrl(post)}>{post.data.title}</a>
+						</li>
+					))}
+				</ul>
+			)
+		}
+		<p><a href="/blog/">All posts &rarr;</a></p>
+	</section>
+</BaseLayout>
+
+<style>
+	.intro {
+		margin-bottom: 2em;
+	}
+	.post-list li {
+		display: flex;
+		gap: 1em;
+	}
+	.date {
+		flex-shrink: 0;
+		min-width: 7em;
+		color: rgb(var(--gray));
+	}
+</style>
